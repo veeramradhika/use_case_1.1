@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot HTML Page</title>
+    <style>
+        /* Add your CSS styles here */
+        /* Absolute Center Spinner */
+        #spin {
+            position: fixed;
+            z-index: 999;
+            overflow: show;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+        }
+
+        .user-message {
+            margin: 10px;
+            background-color: lightgray;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .bot-message {
+            margin: 10px;
+            background-color: lightblue;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    @{
+        ViewData["Title"] = "Create";
+    }
+
+    <h1>Create</h1>
+
+    @* @using (Html.BeginForm("UploadFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+    <input type="file" name="file" />
+    <button type="submit">Upload File</button>
+    }*@
+
+    @if (TempData["UploadedFileContent"] != null)
+    {
+        <h2>Uploaded File Content:</h2>
+        <pre>@TempData["UploadedFileContent"]</pre>
+    }
+    else
+    {
+        <p>No input data available.</p>
+    }
+
+    <div>
+        <input type="file" id="input-file" accept=".txt" />
+        <button id="upload-button" class="btn btn-primary">Upload File</button>
+    </div>
+    <div id="file-content-section" style="display:none;">
+        <h2>Uploaded File Content:</h2>
+        <pre id="file-content"></pre>
+    </div>
+
+    <div id="chatbot-container">
+        @Html.Partial("_ChatLog") <!-- Include the chat log partial view here -->
+        <div class="input-group mb-3">
+            <textarea class="form-control" id="message-input" placeholder="Type your message..." style="font-size: 16px; line-height: 24px;"></textarea>
+            <div class="input-group-append">
+                <button id="send-button" class="btn btn-outline-primary" type="button">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="spinner-border text-primary" id="spin" role="status" style="display:none"></div>
+    <pre style="white-space: pre-wrap;" id="output">  </pre>
+    <button id="download-button" class="btn btn-primary" style="display: none;">Download Response</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var context = ""; // Initialize the conversation context
+            var uploadedFile = null; // To store the uploaded file
+
+            $('#upload-button').click(function () {
+                var fileInput = document.getElementById('input-file');
+                var file = fileInput.files[0];
+
+                var formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/Home/UploadFile',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        uploadedFile = response;
+
+                        // Show the uploaded file content section
+                        $('#file-content-section').show();
+
+                        // Display the content of the uploaded file in the 'file-content' element
+                        $('#file-content').text(response);
+                    },
+                    error: function (xhr, status, error) {
+                        $('#output').html(error);
+                    }
+                });
+            });
+
+            $('#send-button').click(function () {
+                $('#spin').show();
+
+                var prompt = $('#message-input').val();
+
+                $.ajax({
+                    url: '/Home/Get',
+                    type: 'POST',
+                    data: { 'prompt': prompt, 'file': uploadedFile },
+                    success: function (response) {
+                        $('#spin').hide();
+
+                        // Append the user's message and file content to the chat log
+                        $('#chat-log').append('<div class="user-message">' + prompt + ': ' + uploadedFile + '</div>');
+
+                        // Append the bot's response to the chat log
+                        $('#chat-log').append('<div class="bot-message">' + response + '</div>');
+
+                        // Clear the input field
+                        $('#message-input').val('');
+
+                        // Show the download button for the response
+                        $('#download-button').show();
+
+                        // Set the download button's onclick event
+                        $('#download-button').off('click').on('click', function () {
+                            downloadResponse(prompt,response);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        $('#output').html(error);
+                    }
+                });
+            });
+
+            function downloadResponse(prompt, response) {
+                var content = "Prompt: " + prompt + "\n\n" + "Response: " + response;
+                var blob = new Blob([content], { type: 'text/plain' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'Chatbot_Response.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        });
+    </script>
+</body>
+</html>

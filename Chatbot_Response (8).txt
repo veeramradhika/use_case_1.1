@@ -1,0 +1,5 @@
+Prompt: list the smart tv details
+
+Response: | Product Name   | Product Price (USD) | Product Manufacture Place | Product Sales |
+|----------------|---------------------|---------------------------|---------------|
+| Smart TV Z     | 699.99              | South Korea               | 800           |

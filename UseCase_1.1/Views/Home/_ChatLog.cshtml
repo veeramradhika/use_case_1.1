@@ -1,0 +1,9 @@
+﻿@{
+    string response = ViewBag.Response ?? string.Empty;
+}
+
+<pre style="white-space: pre-wrap;" id="chat-log">
+    @Html.Raw(response)
+</pre>
+
+<button id="download-button" class="btn btn-primary" style="display: none;">Download Response</button>

@@ -1,0 +1,13 @@
+| Product Name       | Product Price (USD) | Product Manufacture Place | Product Sales |
+|--------------------|---------------------|---------------------------|---------------|
+| Smartphone X       | 499.99              | China                     | 1200          |
+| Laptop Y           | 899.99              | USA                       | 500           |
+| Smart TV Z         | 699.99              | South Korea               | 800           |
+| Headphones A       | 149.99              | Japan                     | 2000          |
+| Tablet B           | 299.99              | China                     | 600           |
+| Camera C           | 599.99              | Germany                   | 300           |
+| Gaming Console D   | 399.99              | USA                       | 1000          |
+| Fitness Tracker E  | 129.99              | China                     | 1500          |
+| Wireless Speaker F | 89.99               | Taiwan                    | 2500          |
+| Smartwatch G       | 199.99              | South Korea               | 800           |
+| Drone H            | 349.99              | China                     | 400           |
